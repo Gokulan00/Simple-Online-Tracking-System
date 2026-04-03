@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Place Order</title>
+</head>
+<body>
+
+<h2>Place Order</h2>
+
+<input id="name" placeholder="Customer Name"><br><br>
+<input id="product" placeholder="Product"><br><br>
+<input id="quantity" type="number" placeholder="Quantity"><br><br>
+
+<button onclick="placeOrder()">Place Order</button>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCXfzO34BmXc1JqX_5U8t-VywpnccwJslI",
+  authDomain: "order-tracking-system-eb37b.firebaseapp.com",
+  projectId: "order-tracking-system-eb37b",
+  storageBucket: "order-tracking-system-eb37b.firebasestorage.app",
+  messagingSenderId: "554833467629",
+  appId: "1:554833467629:web:0bfba09a83a37efe6ad4e4",
+  measurementId: "G-7YYPTXTTNR"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function placeOrder() {
+  const name = document.getElementById("name").value;
+  const product = document.getElementById("product").value;
+  const quantity = document.getElementById("quantity").value;
+
+  if (!name || !product || !quantity) {
+    alert("Please fill all fields!");
+    return;
+  }
+
+  await addDoc(collection(db, "orders"), {
+    customer_name: name,
+    product: product,
+    quantity: Number(quantity),
+    status: "Placed"
+  });
+
+  alert("Order Placed Successfully!");
+
+  // 🔥 Redirect to track page
+  window.location.href = "track.html";
+}
+
+window.placeOrder = placeOrder;
+
+</script>
+
+</body>
+</html>
