@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h2 id="welcome"></h2>
+
+<h3>All Orders</h3>
+<div id="ordersBox"></div>
+
+<br>
+
+<button onclick="goPlace()">Place Order</button>
+<button onclick="goTrack()">Track Order</button>
+<button onclick="logout()">Logout</button>
+
+<script>
+if (localStorage.getItem("loggedIn") !== "true") {
+  window.location.href = "/";
+}
+
+document.getElementById("welcome").innerText =
+  "Welcome " + localStorage.getItem("userEmail");
+
+function loadOrders() {
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  if (orders.length === 0) {
+    document.getElementById("ordersBox").innerText = "No orders yet";
+    return;
+  }
+
+  let html = "";
+
+  orders.forEach((order, index) => {
+    html += `
+      <div style="border:1px solid #000; padding:10px; margin:10px;">
+        ID: ${order.id} <br>
+        Product: ${order.product} <br>
+        Quantity: ${order.quantity} <br>
+        Status: ${order.status} <br><br>
+        <button onclick="updateStatus(${index})">Next Status</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("ordersBox").innerHTML = html;
+}
+
+function updateStatus(index) {
+  let orders = JSON.parse(localStorage.getItem("orders"));
+
+  if (orders[index].status === "Placed") {
+    orders[index].status = "Shipped";
+  } else if (orders[index].status === "Shipped") {
+    orders[index].status = "Delivered";
+  } else {
+    alert("Already Delivered");
+    return;
+  }
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+  loadOrders();
+}
+
+function goPlace() {
+  window.location.href = "/place";
+}
+
+function goTrack() {
+  window.location.href = "/track";
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = "/";
+}
+
+loadOrders();
+</script>
+
+</body>
+</html>
